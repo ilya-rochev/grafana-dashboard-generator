@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    include: 'actuator'
+
+meter:
+  registry:
+    factory:
+      bean:
+        name: 'prometheusMeterRegistry'
