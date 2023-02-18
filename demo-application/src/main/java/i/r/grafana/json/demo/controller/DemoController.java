@@ -1,7 +1,8 @@
 package i.r.grafana.json.demo.controller;
 
 import i.r.grafana.json.demo.controller.dto.PingResponse;
-import i.r.grafana.json.demo.service.ExternalStubService;
+import i.r.grafana.json.demo.service.ExternalCounterServiceStub;
+import i.r.grafana.json.demo.service.ExternalTimerServiceStub;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,23 +16,27 @@ import java.util.List;
 @RequestMapping("api/external/")
 public class DemoController {
 
-    private final ExternalStubService externalService;
+    private final ExternalTimerServiceStub externalTimerService;
+    private final ExternalCounterServiceStub externalCounterService;
 
     @PostMapping("save")
     public PingResponse save(@RequestParam("objects") List<String> objects) {
-        externalService.save(objects);
+        externalTimerService.save();
+        externalCounterService.save(objects);
         return new PingResponse(0L, "success operation");
     }
 
     @PostMapping("delete")
     public PingResponse delete(@RequestParam("objects") List<String> objects) {
-        externalService.delete(objects);
+        externalTimerService.delete();
+        externalCounterService.delete(objects);
         return new PingResponse(0L, "success operation");
     }
 
     @PostMapping("fetch")
     public PingResponse fetch(@RequestParam("objects") List<String> objects) {
-        externalService.fetch(objects);
+        externalTimerService.fetch();
+        externalCounterService.fetch(objects);
         return new PingResponse(0L, "success operation");
     }
 }

@@ -7,6 +7,7 @@ import i.r.grafana.json.processor.converter.ObjectMapperSerializer;
 import i.r.grafana.json.processor.model.Panel;
 import i.r.grafana.json.processor.model.Target;
 import i.r.grafana.json.processor.util.ExpressionBuilder;
+import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Timer;
@@ -38,7 +39,7 @@ public class GrafanaDashboardGeneratorProcessor extends AbstractProcessor {
 
     private static final Logger log = LoggerFactory.getLogger("DashboardGeneratorProcessor");
 
-    private static final DashboardFactory dashboardFactory = new DashboardFactory();
+    private DashboardFactory dashboardFactory = new DashboardFactory();
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment) {
@@ -71,6 +72,18 @@ public class GrafanaDashboardGeneratorProcessor extends AbstractProcessor {
             System.out.println("Trying to register metric with name ----> " + timedMetric.value() + annotatedElement);
         }
 
+        for (Element annotatedElement : roundEnvironment.getElementsAnnotatedWith(Counted.class)) {
+            Counted counted = annotatedElement.getAnnotation(Counted.class);
+            if (counted != null) {
+                log.info("timed metric found ----> " + counted);
+                registerCounterMetricToDashboard(preparedDashboards, counted);
+            } else {
+                log.info("timed metric NOT found ----> ");
+            }
+
+            System.out.println("Trying to register metric with name ----> " + counted.value() + annotatedElement);
+        }
+
         for (Element annotatedElement : roundEnvironment.getElementsAnnotatedWith(Metric.class)) {
             Metric metric = annotatedElement.getAnnotation(Metric.class);
             if (!annotatedElement.getKind().isField()) {
@@ -82,12 +95,10 @@ public class GrafanaDashboardGeneratorProcessor extends AbstractProcessor {
                     registerCounterMetricToDashboard(preparedDashboards, metric);
                 } else if (typeName.equals(Timer.class.getCanonicalName())) {
                     log.info("registering timer metric {}", metric);
+                    registerTimedMetricToDashboard(preparedDashboards, metric);
                 }
-
             }
-
         }
-
 
         if (CollectionUtils.isNotEmpty(preparedDashboards)) {
             saveDashboardsToFile(preparedDashboards);
@@ -95,6 +106,28 @@ public class GrafanaDashboardGeneratorProcessor extends AbstractProcessor {
 
         System.out.println("PROCESS END");
         return true;
+    }
+
+    private void registerTimedMetricToDashboard(List<i.r.grafana.json.processor.model.Dashboard> preparedDashboards, Metric metric) {
+        if (CollectionUtils.isEmpty(preparedDashboards)) {
+            return;
+        }
+
+        List<Panel> panels = preparedDashboards.stream()
+                .map(i.r.grafana.json.processor.model.Dashboard::getPanels)
+                .filter(CollectionUtils::isNotEmpty)
+                .flatMap(p -> p.stream())
+                .filter(panel -> panel.getMetric().equals(metric.value()))
+                .collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(panels)) {
+            log.warn("Unable to register metric = {}. Panels for this metric not found in configuration", metric.value());
+            return;
+        }
+
+        panels.forEach(
+                panel -> panel.getTargets().add(buildTimedTarget(metric))
+        );
     }
 
     private void registerCounterMetricToDashboard(List<i.r.grafana.json.processor.model.Dashboard> preparedDashboards, Metric metric) {
@@ -115,10 +148,9 @@ public class GrafanaDashboardGeneratorProcessor extends AbstractProcessor {
         }
 
         panels.forEach(
-                panel -> panel.getTargets().add(buildTarget(metric))
+                panel -> panel.getTargets().add(buildCounterTarget(metric))
         );
     }
-
 
     private void registerTimedMetricToDashboard(List<i.r.grafana.json.processor.model.Dashboard> preparedDashboards, Timed timedMetric) {
         if (CollectionUtils.isEmpty(preparedDashboards)) {
@@ -142,6 +174,36 @@ public class GrafanaDashboardGeneratorProcessor extends AbstractProcessor {
         );
     }
 
+    private void registerCounterMetricToDashboard(List<i.r.grafana.json.processor.model.Dashboard> preparedDashboards, Counted counted) {
+        if (CollectionUtils.isEmpty(preparedDashboards)) {
+            return;
+        }
+
+        List<Panel> panels = preparedDashboards.stream()
+                .map(i.r.grafana.json.processor.model.Dashboard::getPanels)
+                .filter(CollectionUtils::isNotEmpty)
+                .flatMap(p -> p.stream())
+                .filter(panel -> panel.getMetric().equals(counted.value()))
+                .collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(panels)) {
+            log.warn("Unable to register metric = {}. Panels for this metric not found in configuration", counted.value());
+            return;
+        }
+
+        panels.forEach(
+                panel -> panel.getTargets().add(buildCounterTarget(counted))
+        );
+
+    }
+
+    private Target buildTimedTarget(Metric metric) {
+        Target target = new Target();
+        target.setExpr(ExpressionBuilder.generateTimedExpression(metric.value(), metric.extraTags(), "1m"));
+        target.setLegendFormat(metric.description());
+        return target;
+    }
+
     private Target buildTarget(Timed metric) {
         Target target = new Target();
         target.setExpr(ExpressionBuilder.generateTimedExpression(metric.value(), metric.extraTags(), "1m"));
@@ -149,12 +211,18 @@ public class GrafanaDashboardGeneratorProcessor extends AbstractProcessor {
         return target;
     }
 
-    private Target buildTarget(Metric metric) {
+    private Target buildCounterTarget(Counted metric) {
         Target target = new Target();
         target.setExpr(ExpressionBuilder.generateCounterExpression(metric.value(), metric.extraTags()));
         target.setLegendFormat(metric.description());
         return target;
+    }
 
+    private Target buildCounterTarget(Metric metric) {
+        Target target = new Target();
+        target.setExpr(ExpressionBuilder.generateCounterExpression(metric.value(), metric.extraTags()));
+        target.setLegendFormat(metric.description());
+        return target;
     }
 
     public SourceVersion getSupportedSourceVersion() {
@@ -172,7 +240,7 @@ public class GrafanaDashboardGeneratorProcessor extends AbstractProcessor {
             return;
         }
 
-        String dashboardFileName = "META-INF/grafana/dashboards/dashboard_" + dashboard.getUid() + ".json";
+        String dashboardFileName = "dashboard_" + dashboard.getUid() + ".json";
         log.debug("Saving dashboard {} to file {}", dashboard, dashboardFileName);
         try {
             FileObject dashboardOutputFile = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT,
