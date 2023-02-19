@@ -1,6 +1,12 @@
 # Grafana Dashboard Generator
 Annotation processor which automatically generates Grafana Dashboard JSON model based on metrics declared in application.
 
+## How to build project
+run command
+```
+./mvnw clean install
+```
+
 ## How to use library
 
 1. Add next dependencies to pom.xml
@@ -73,35 +79,21 @@ It generates dashboard model and injects metrics you declared using `@Metric` an
 5. Run your project and import generated json file to grafana. Enjoy to view you custom application metrics.
 
 
-# Demo application
+## Demo application
+Project provides demo application to be informed how to use library in practice
 
 Requires:
 
     - "docker" runned at your machine;
-
-
-docker build --platform linux/amd64 -t grafana-test-application .
-
-
-docker build --platform linux/amd64 -t grafana-test-application .
-
-
-How to test demo application:
-
 
 1. Start locally grafana and prometheus in docker:
 ```
 docker-compose up -d
 ```
 
-2. Build project:
-```
-./mvnw clean install
-```
+2. Start demo application;
 
-3. Start demo application;
-
-4. Run several invocation next rest api methods with various parameters `objects`
+3. Run several invocation next rest api methods with various parameters `objects`
 
 - method save:
 ```
