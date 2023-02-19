@@ -1,11 +1,9 @@
 package i.r.grafana.json.processor.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static i.r.grafana.json.processor.component.ProcessorConfiguration.LOG;
 
 public class ExpressionBuilder {
 
-    private static final Logger log = LoggerFactory.getLogger("DashboardGeneratorProcessor");
     private static final String TIMED_EXPRESSION_TEMPLATE = "sum(rate(%METRIC_NAME%_seconds_sum%TAGS%[%INTERVAL%]))/sum(rate(%METRIC_NAME%_seconds_count%TAGS%[%INTERVAL%]))";
     private static final String COUNTER_EXPRESSION_TEMPLATE = "%METRIC_NAME%_total%TAGS%";
 
@@ -27,7 +25,7 @@ public class ExpressionBuilder {
         }
 
         if (tags.length % 2 != 0) {
-            log.warn("tags has odd count. unable to process. tags = {} ",tags);
+            LOG.warn("tags has odd count. unable to process. tags = {} ",tags);
         }
 
         StringBuilder tagsStringBuilder = new  StringBuilder()

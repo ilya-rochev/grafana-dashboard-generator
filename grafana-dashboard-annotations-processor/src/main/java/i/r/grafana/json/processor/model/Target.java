@@ -1,6 +1,11 @@
 package i.r.grafana.json.processor.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Target {
+
+    @JsonIgnore
+    private String metric;
 
     private Datasource datasource;
 
@@ -13,6 +18,14 @@ public class Target {
     private boolean range;
 
     private String refId;
+
+    public String getMetric() {
+        return metric;
+    }
+
+    public void setMetric(String metric) {
+        this.metric = metric;
+    }
 
     public Datasource getDatasource() {
         return datasource;
