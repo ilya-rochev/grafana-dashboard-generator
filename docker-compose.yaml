@@ -1,12 +1,5 @@
 version: '3'
 services:
-  web:
-    build: .
-    ports:
-      - 8080:8080
-      - 7050:7050
-    volumes:
-      - .:/app
   prometheus:
     image: prom/prometheus
     container_name: prometheus

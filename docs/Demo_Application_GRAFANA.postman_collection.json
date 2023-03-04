@@ -1,0 +1,91 @@
+{
+	"info": {
+		"_postman_id": "77ec0359-34f2-462a-a88d-e8b14382a3b1",
+		"name": "Demo application (GRAFANA)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25926318"
+	},
+	"item": [
+		{
+			"name": "save",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/external/save?objects=object1,object2,object3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"external",
+						"save"
+					],
+					"query": [
+						{
+							"key": "objects",
+							"value": "object1,object2,object3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/external/delete?objects=object1,object2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"external",
+						"delete"
+					],
+					"query": [
+						{
+							"key": "objects",
+							"value": "object1,object2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "fetch",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/external/fetch?objects=object1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"external",
+						"fetch"
+					],
+					"query": [
+						{
+							"key": "objects",
+							"value": "object1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

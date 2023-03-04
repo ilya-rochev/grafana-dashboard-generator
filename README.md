@@ -78,7 +78,6 @@ It generates dashboard model and injects metrics you declared using `@Metric` an
 
 5. Run your project and import generated json file to grafana. Enjoy to view you custom application metrics.
 
-
 ## Demo application
 Project provides demo application to be informed how to use library in practice
 
@@ -91,19 +90,11 @@ Requires:
 docker-compose up -d
 ```
 
-2. Start demo application;
+2. Export generated metrics to `Grafana`
 
-3. Run several invocation next rest api methods with various parameters `objects`
+3. Start demo application;
 
-- method save:
-```
-POST http://localhost:8080/api/external/save?objects=object1,object2,object3
-```
-- method delete:
-```
-POST http://localhost:8080/api/external/delete?objects=object1,object2,object3
-```
-- method fetch:
-```
-POST http://localhost:8080/api/external/fetch?objects=object1,object2,object3
-```
+4. Test demo application with postman collection `docs/Demo_Application_GRAFANA.postman_collection.json`
+
+5. See metrics in Grafana
+![Alt text](/docs/dashboard.png "Demo application generated dashboard")

@@ -24,20 +24,17 @@ public class ExternalCounterServiceStub {
     @Metric(value = "counter_as_field", extraTags = {"type", "fetched"}, description = "Fetched objects counter")
     private final Counter fechedObjectsCounter;
 
-
-
-
-    @Counted(value = "counter_as_annotation",  extraTags = {"operation", "save"})
+    @Counted(value = "counter_as_annotation",  extraTags = {"operation", "save"}, description = "method 'save' invocation counter")
     public void save(List<String> objects) {
         savedObjectsCounter.increment(CollectionUtils.size(objects));
     }
 
-    @Counted(value = "counter_as_annotation",  extraTags = {"operation", "delete"})
+    @Counted(value = "counter_as_annotation",  extraTags = {"operation", "delete"}, description = "method 'delete' invocation counter")
     public void delete(List<String> objects) {
         deletedObjectsCounter.increment(CollectionUtils.size(objects));
     }
 
-    @Counted(value = "counter_as_annotation",  extraTags = {"operation", "fetch"})
+    @Counted(value = "counter_as_annotation",  extraTags = {"operation", "fetch"}, description = "method 'fetch' invocation counter")
     public void fetch(List<String> objects) {
         fechedObjectsCounter.increment(CollectionUtils.size(objects));
     }
