@@ -17,10 +17,14 @@ public class MeterFactory {
     private final MeterRegistry meterRegistry;
 
     public Counter counter(String name, String... tags) {
-        return meterRegistry.counter(name, tags);
+        return Counter.builder(name)
+                .tags(tags)
+                .register(meterRegistry);
     }
 
     public Timer timer(String name, String... tags) {
-        return meterRegistry.timer(name, tags);
+        return Timer.builder(name)
+                .tags(tags)
+                .register(meterRegistry);
     }
 }

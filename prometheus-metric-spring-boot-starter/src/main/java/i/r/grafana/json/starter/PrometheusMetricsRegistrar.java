@@ -54,7 +54,7 @@ public class PrometheusMetricsRegistrar implements BeanDefinitionRegistryPostPro
 
     private void prepareMetric(Field field, BeanDefinitionRegistry registry) {
         Metric metric = field.getAnnotation(Metric.class);
-        GenericBeanDefinition metricBeanDefinition = prepareBeanDefinion(metric, field.getType());
+        GenericBeanDefinition metricBeanDefinition = prepareBeanDefinition(metric, field.getType());
         if (metricBeanDefinition == null) {
             log.warn("Unable to recognize metric type to inject it ... filed = {}", field);
             return;
@@ -63,7 +63,7 @@ public class PrometheusMetricsRegistrar implements BeanDefinitionRegistryPostPro
         registry.registerBeanDefinition(field.getName(), metricBeanDefinition);
     }
 
-    private GenericBeanDefinition prepareBeanDefinion(Metric metric, Class<?> type) {
+    private GenericBeanDefinition prepareBeanDefinition(Metric metric, Class<?> type) {
         if (type == Counter.class) {
             return prepareMetricBeanDefinition(
                     MeterFactory.BEAN_NAME,

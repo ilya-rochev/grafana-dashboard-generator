@@ -71,7 +71,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>i.r.grafana.json.demo.GrafanaIntegrationApplication</mainClass>
+                    <mainClass>i.r.grafana.json.demo.DemoApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
