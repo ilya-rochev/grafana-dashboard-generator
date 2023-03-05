@@ -12,13 +12,13 @@ run command
 1. Add next dependencies to pom.xml
 ```
 <dependency>
-    <groupId>i.r.grafana-json-generator</groupId>
+    <groupId>io.github.ilya-rochev</groupId>
     <artifactId>grafana-dashboard-annotations-processor</artifactId>
     <version>1.0</version>
 </dependency>
 
 <dependency>
-    <groupId>i.r.grafana-json-generator</groupId>
+    <groupId>io.github.ilya-rochev</groupId>
     <artifactId>prometheus-metric-spring-boot-starter</artifactId>
     <version>1.0</version>
 </dependency>
