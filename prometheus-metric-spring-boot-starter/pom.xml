@@ -6,7 +6,7 @@
     <parent>
         <groupId>i.r.grafana-json-generator</groupId>
         <artifactId>grafana-json-generator-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
 
     <artifactId>prometheus-metric-spring-boot-starter</artifactId>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>i.r.grafana-json-generator</groupId>
             <artifactId>grafana-annotations</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
