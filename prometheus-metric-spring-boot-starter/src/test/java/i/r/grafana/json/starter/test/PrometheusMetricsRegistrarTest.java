@@ -1,4 +1,4 @@
-package i.r.grafana.json.starter;
+package i.r.grafana.json.starter.test;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Timer;

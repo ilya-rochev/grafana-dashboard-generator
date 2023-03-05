@@ -1,4 +1,4 @@
-package i.r.grafana.json.starter;
+package i.r.grafana.json.starter.test;
 
 import i.r.grafana.json.annotations.promethues.Metric;
 import io.micrometer.core.instrument.Counter;
