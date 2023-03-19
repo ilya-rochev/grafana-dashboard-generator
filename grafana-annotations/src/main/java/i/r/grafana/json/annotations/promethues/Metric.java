@@ -15,4 +15,8 @@ public @interface Metric {
     String[] extraTags() default {};
 
     String description() default "";
+
+    boolean rate() default true;
+
+    boolean sum() default true;
 }

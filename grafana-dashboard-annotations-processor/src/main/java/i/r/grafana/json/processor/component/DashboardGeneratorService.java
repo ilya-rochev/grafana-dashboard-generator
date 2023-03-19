@@ -85,6 +85,7 @@ public class DashboardGeneratorService {
 
         for (Element annotatedElement : roundEnvironment.getElementsAnnotatedWith(Metric.class)) {
             Target target = null;
+            Target maxTarget = null;
 
             Metric metric = annotatedElement.getAnnotation(Metric.class);
             if (!annotatedElement.getKind().isField()) {
@@ -97,6 +98,7 @@ public class DashboardGeneratorService {
                 } else if (typeName.equals(Timer.class.getCanonicalName())) {
                     LOG.info("registering timer metric {}", metric);
                     target = targetFactory.buildTimerTarget(metric);
+                    maxTarget = targetFactory.buildMaxTarget(metric);
                 } else {
                     LOG.warn("Annotation {} should be presented only on next classes fields {}", Metric.class, List.of(Timer.class, Counter.class));
                 }
@@ -105,6 +107,11 @@ public class DashboardGeneratorService {
             if (target != null) {
                 targetList.add(target);
             }
+
+            if (maxTarget != null) {
+                targetList.add(maxTarget);
+            }
+
         }
 
         return targetList;
@@ -129,8 +136,10 @@ public class DashboardGeneratorService {
             Timed timed = annotatedElement.getAnnotation(Timed.class);
             LOG.debug("Timed metric found {} ", timed);
             Target target = targetFactory.buildTimerTarget(timed);
+            Target maxTarget = targetFactory.buildMaxTarget(timed);
             LOG.debug("Timed metric = {}. Its target = {} ", timed, target);
             targets.add(target);
+            targets.add(maxTarget);
         }
 
         return targets;
